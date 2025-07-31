@@ -1,5 +1,6 @@
 # predictor.py
 
+import os
 import pandas as pd
 import joblib
 import requests
@@ -22,8 +23,9 @@ try:
     model_columns = joblib.load(COLUMNS_PATH)
     df_base = pd.read_csv(DATA_PATH)
     holiday_calendar = holidays.CountryHoliday(HOLIDAY_COUNTRY, prov=None, state=HOLIDAY_PROVINCE)
-    with open(API_KEY_PATH, 'r') as f:
-        api_key = f.read().strip()
+    api_key = os.environ.get('API_KEY')
+    if not api_key:
+        raise ValueError("API_KEY environment variable not set.")
 except FileNotFoundError as e:
     raise RuntimeError(f"Could not initialize predictor: {e}. Make sure all required files are present.")
 
